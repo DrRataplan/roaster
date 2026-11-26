@@ -1,0 +1,29 @@
+name: Lint XQuery
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # The library itself. The root expath-pkg.xml.tmpl only depends on eXist-db,
+      # so nothing is fetched.
+      - name: Lint content
+        uses: DrRataplan/xq-lsp@v1
+        with:
+          version: "^1.10.0"
+          paths: content
+
+      # The test app: depends on jwt (and roaster, which the local content/ shadows).
+      - name: Lint test app
+        uses: DrRataplan/xq-lsp@v1
+        with:
+          version: "^1.10.0"
+          working-directory: test/app
+          paths: modules
